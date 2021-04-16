@@ -34,5 +34,8 @@ class Produit(models.Model):
     comments = models.CharField(max_length=2000)
     category = models.IntegerField(default='-1')
 
-
-
+class Transaction(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    price = models.FloatField(default = 0.0)
+    tigID = models.IntegerField(default='-1')
+    transaction_type = models.IntegerField(default='-1')
