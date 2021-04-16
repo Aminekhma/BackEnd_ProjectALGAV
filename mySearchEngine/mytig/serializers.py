@@ -31,5 +31,6 @@ class ProduitSerializer(ModelSerializer):
             'discount_percent',
             'quantity',
             'sales_number',
-            'comments', 
+            'comments',
+            'category' 
         )

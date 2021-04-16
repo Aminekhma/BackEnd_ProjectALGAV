@@ -32,5 +32,7 @@ class Produit(models.Model):
     quantity = models.IntegerField(default = 0)
     sales_number = models.IntegerField(default = 0)
     comments = models.CharField(max_length=2000)
+    category = models.IntegerField(default='-1')
+
 
 
