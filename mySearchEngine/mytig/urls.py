@@ -19,6 +19,6 @@ urlpatterns = [
     
     path('decrementStock/<int:id>/<int:number>/',views.decrementStock.as_view()),
     path('incrementStock/<int:id>/<int:number>/',views.incrementStock.as_view()),
-    path('changePercent/<int:id>/<float:newprice>/',views.changePercent.as_view()),
+    path('changePercent/<int:id>/<float:percentage>/',views.changePercent.as_view()),
 
 ]
