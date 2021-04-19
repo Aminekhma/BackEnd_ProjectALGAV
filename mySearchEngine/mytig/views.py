@@ -45,6 +45,9 @@ class DetailProduit(APIView):
     def get(self, request, pk, format=None):
         response = self.get_object(pk)
         return Response(response)
+    def patch(self, request, pk, format=None):
+        response = self.get_object(pk)
+        return Response(response)
 
 class decrementStock(APIView):
     def get_object(self, id):
@@ -71,12 +74,14 @@ class incrementStock(APIView):
             return queryset
         except Produit.DoesNotExist:
             raise Http404
-    def get(self, request, id, number,format=None):
+    def get(self, request,format=None):
         prod = self.get_object(id)
         prod.quantity = prod.quantity + number
         prod.save()
         response = ProduitSerializer(prod).data
+
         return Response(response)
+
 
 class changePercent(APIView):
     def get_object(self, id):

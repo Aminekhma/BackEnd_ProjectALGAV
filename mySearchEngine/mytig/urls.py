@@ -10,7 +10,9 @@ register_converter(converters.FloatConverter, 'float')
 
 urlpatterns = [
     path('products/', views.ListeDeProduits.as_view()),
+
     path('transactions/', views.ListTransaction.as_view()),
+    
     path('availableproducts/', views.Availablelist.as_view()),
     path('coquillages/', views.Coquillageslist.as_view()),
     path('onsaleproducts/', views.PromoList.as_view()),
