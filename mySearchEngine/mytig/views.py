@@ -82,7 +82,6 @@ class incrementStock(APIView):
 
         return Response(response)
 
-
 class changePercent(APIView):
     def get_object(self, id):
         try:
