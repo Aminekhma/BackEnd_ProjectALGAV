@@ -46,4 +46,8 @@ class TransactionSerializer(ModelSerializer):
             'quantity',
             'tigID',
             'transaction_type'
+<<<<<<< HEAD
         )
+=======
+        )
+>>>>>>> 076d955602993595184236d61f8097252bc6d511

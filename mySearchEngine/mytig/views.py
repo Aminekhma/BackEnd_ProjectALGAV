@@ -6,6 +6,10 @@ from mytig.models import Produit
 from mytig.models import Transaction
 from mytig.serializers import ProduitSerializer
 from mytig.serializers import TransactionSerializer
+<<<<<<< HEAD
+=======
+
+>>>>>>> 076d955602993595184236d61f8097252bc6d511
 # Create your views here.
 
 class ListeDeTransactions(APIView):
@@ -41,6 +45,14 @@ class ListeDeProduitss(APIView):
 #    def post(self, request, format=None):
 #        NO DEFITION of post --> server will return "405 NOT ALLOWED"
 
+class ListTransaction(APIView):
+    def get(self, request, format=None):
+        res = []
+        queryset = Transaction.objects.all()
+        for p in queryset:
+            res.append(TransactionSerializer(p).data)
+        return Response(res)
+
 class ListeDeProduits(APIView):
     def get(self, request, format=None):
         res = []
@@ -60,7 +72,13 @@ class DetailProduit(APIView):
     def get(self, request, pk, format=None):
         response = self.get_object(pk)
         return Response(response)
+<<<<<<< HEAD
 
+=======
+    def patch(self, request, pk, format=None):
+        response = self.get_object(pk)
+        return Response(response)
+>>>>>>> 076d955602993595184236d61f8097252bc6d511
 
 class decrementStock(APIView):
     def get_object(self, id):
@@ -87,11 +105,12 @@ class incrementStock(APIView):
             return queryset
         except Produit.DoesNotExist:
             raise Http404
-    def get(self, request, id, number,format=None):
+    def get(self, request,format=None):
         prod = self.get_object(id)
         prod.quantity = prod.quantity + number
         prod.save()
         response = ProduitSerializer(prod).data
+
         return Response(response)
 
 class changePercent(APIView):
