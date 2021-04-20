@@ -8,6 +8,7 @@ from mytig.serializers import ProduitSerializer
 from mytig.serializers import TransactionSerializer
 # Create your views here.
 
+# type (une transaction peut être  0 un achat, 1 une vente, ou 2 des invendus)
 class ListeDeTransactions(APIView):
     def get_object(self, pk):
         try:
@@ -26,10 +27,28 @@ class ListeDeTransactions(APIView):
 
     def patch(self, request,format=None):
         prod = request.data
-        p = self.get_object(prod['id'])
-        trans = Transaction(tigID = prod['id'],price=prod["price"],quantity=prod["quantity"],transaction_type=prod["transaction_type"])
-        trans.save()
-        return Response(p)
+        print(request.data)
+        if prod['transaction_type'] == 0 :
+            response = requests.get(baseUrl+'product/'+prod['id'])
+            jsondata = response.json()
+            trans = Transaction(tigID = prod['id'],price=jsondata["price"],quantity=int(prod["quantity"]),transaction_type= int(prod["transaction_type"]))
+            trans.save()
+            return Response({ "OK" : "Achat fait"})
+
+        if prod['transaction_type'] == 1 :
+            prod_sold = self.get_object(prod['id']) 
+            trans = Transaction(tigID = prod['id'],price=prod_sold['price'],quantity=prod["quantity"],transaction_type= prod["transaction_type"])
+            trans.save()
+            return Response({ "OK" : "Vente faite"})
+
+        if prod['transaction_type'] == 2 :
+            trans = Transaction(tigID = prod['id'],price=0,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
+            trans.save()
+            return Response({ "OK" : "Invendu retiré"})
+         
+
+
+        return Response({ "KO" : "Type de transaction non reconnu"})
 
 class ListeDeProduitss(APIView):
     def get(self, request, format=None):
@@ -40,14 +59,6 @@ class ListeDeProduitss(APIView):
         return Response(res)
 #    def post(self, request, format=None):
 #        NO DEFITION of post --> server will return "405 NOT ALLOWED"
-
-class ListTransaction(APIView):
-    def get(self, request, format=None):
-        res = []
-        queryset = Transaction.objects.all()
-        for p in queryset:
-            res.append(TransactionSerializer(p).data)
-        return Response(res)
 
 class ListeDeProduits(APIView):
     def get(self, request, format=None):
