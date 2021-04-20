@@ -6,10 +6,6 @@ from mytig.models import Produit
 from mytig.models import Transaction
 from mytig.serializers import ProduitSerializer
 from mytig.serializers import TransactionSerializer
-<<<<<<< HEAD
-=======
-
->>>>>>> 076d955602993595184236d61f8097252bc6d511
 # Create your views here.
 
 class ListeDeTransactions(APIView):
@@ -72,13 +68,6 @@ class DetailProduit(APIView):
     def get(self, request, pk, format=None):
         response = self.get_object(pk)
         return Response(response)
-<<<<<<< HEAD
-
-=======
-    def patch(self, request, pk, format=None):
-        response = self.get_object(pk)
-        return Response(response)
->>>>>>> 076d955602993595184236d61f8097252bc6d511
 
 class decrementStock(APIView):
     def get_object(self, id):
