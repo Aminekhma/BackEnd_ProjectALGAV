@@ -31,7 +31,7 @@ class ListeDeTransactions(APIView):
         if prod['transaction_type'] == 0 :
             response = requests.get(baseUrl+'product/'+prod['id'])
             jsondata = response.json()
-            trans = Transaction(tigID = prod['id'],price=jsondata["price"],quantity=int(prod["quantity"]),transaction_type= int(prod["transaction_type"]))
+            trans = Transaction(tigID = prod['id'],price=jsondata["price"],quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Achat fait"})
 
