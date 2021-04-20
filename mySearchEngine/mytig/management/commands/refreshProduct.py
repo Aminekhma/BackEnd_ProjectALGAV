@@ -18,7 +18,8 @@ class Command(BaseCommand):
                 name = product['name'],
                 price = product['price'],
                 discount_price = product['discount'],
-                comments = product['comments']
+                comments = product['comments'],
+                category = product['category']
             )
             p.save()
             self.stdout.write(self.style.SUCCESS('['+time.ctime()+'] Successfully added product id="%s"' % product['id']))

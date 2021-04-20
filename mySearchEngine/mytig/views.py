@@ -3,8 +3,34 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from mytig.config import baseUrl
 from mytig.models import Produit
+from mytig.models import Transaction
 from mytig.serializers import ProduitSerializer
+from mytig.serializers import TransactionSerializer
 # Create your views here.
+
+class ListeDeTransactions(APIView):
+    def get_object(self, pk):
+        try:
+            queryset = Produit.objects.get(tigID = pk)
+            response = ProduitSerializer(queryset).data
+            return response
+        except:
+            raise Http404
+
+    def get(self, request, format=None):
+        res = []
+        queryset = Transaction.objects.all()
+        for t in queryset:
+            res.append(TransactionSerializer(t).data)
+        return Response(res)
+
+    def patch(self, request,format=None):
+        prod = request.data
+        p = self.get_object(prod['id'])
+        trans = Transaction(tigID = prod['id'],price=prod["price"],quantity=prod["quantity"],transaction_type=prod["transaction_type"])
+        trans.save()
+        return Response(p)
+
 class ListeDeProduitss(APIView):
     def get(self, request, format=None):
         res = []
@@ -22,16 +48,6 @@ class ListeDeProduits(APIView):
         for p in queryset:
             res.append(ProduitSerializer(p).data)
         return Response(res)
-#    def post(self, request, format=None):
-#        NO DEFITION of post --> server will return "405 NOT ALLOWED"
-
-class RedirectionListePointsRelais(APIView):
-    def get(self, request, format=None):
-        response = requests.get(baseUrl+'shipPoints/')
-        jsondata = response.json()
-        return Response(jsondata)
-#    def post(self, request, format=None):
-#        NO DEFITION of post --> server will return "405 NOT ALLOWED"
 
 class DetailProduit(APIView):
     def get_object(self, pk):
@@ -44,27 +60,7 @@ class DetailProduit(APIView):
     def get(self, request, pk, format=None):
         response = self.get_object(pk)
         return Response(response)
-#    def put(self, request, pk, format=None):
-#        NO DEFITION of put --> server will return "405 NOT ALLOWED"
-#    def delete(self, request, pk, format=None):
-#        NO DEFITION of delete --> server will return "405 NOT ALLOWED"
 
-class RedirectionDetailPointsRelais(APIView):
-    def get_object(self, pk):           
-        try:                            
-            response = requests.get(baseUrl+'shipPoint/'+str(pk)+'/')
-            jsondata = response.json()  
-            return Response(jsondata)   
-        except:                         
-            raise Http404               
-    def get(self, request, pk, format=None):
-        response = requests.get(baseUrl+'shipPoint/'+str(pk)+'/')
-        jsondata = response.json()      
-        return Response(jsondata)       
-#    def put(self, request, pk, format=None):
-#        NO DEFITION of put --> server will return "405 NOT ALLOWED"
-#    def delete(self, request, pk, format=None):
-#        NO DEFITION of delete --> server will return "405 NOT ALLOWED"
 
 class decrementStock(APIView):
     def get_object(self, id):
@@ -98,19 +94,24 @@ class incrementStock(APIView):
         response = ProduitSerializer(prod).data
         return Response(response)
 
-class pourcentChange(APIView):
+class changePercent(APIView):
     def get_object(self, id):
         try:
             queryset = Produit.objects.get(tigID = id)
             return queryset
         except Produit.DoesNotExist:
             raise Http404
-    def get(self, request, id, newprice,format=None):
-        prod = self.get_object(id)
-        prod.discount_percent = newprice
-        prod.save()
-        response = ProduitSerializer(prod).data
-        return Response(response)
+    def get(self, request, id, percentage,format=None):
+        if percentage > 100.0 or percentage < 0.0:
+            return Response({ "error_message" : "Incorrect Value"})
+        else:
+            prod = self.get_object(id)
+            prod.discount_percent = percentage
+            newprice = prod.price - (1.0 - (percentage/100.0))
+            prod.discount_price = round(newprice,2)
+            prod.save()
+            response = ProduitSerializer(prod).data
+            return Response(response)
 
 
 

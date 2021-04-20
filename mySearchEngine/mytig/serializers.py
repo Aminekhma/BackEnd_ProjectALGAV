@@ -3,6 +3,8 @@ from mytig.models import ProduitEnPromotion
 from mytig.models import ProduitAvailable
 from mytig.models import ProduitCoquillages
 from mytig.models import Produit
+from mytig.models import Transaction
+
 
 class ProduitEnPromotionSerializer(ModelSerializer):
     class Meta:
@@ -31,5 +33,17 @@ class ProduitSerializer(ModelSerializer):
             'discount_percent',
             'quantity',
             'sales_number',
-            'comments', 
+            'comments',
+            'category' 
+        )
+
+class TransactionSerializer(ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = (
+            'date', 
+            'price',
+            'quantity',
+            'tigID',
+            'transaction_type'
         )
