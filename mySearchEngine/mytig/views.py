@@ -55,52 +55,26 @@ class ListeDeTransactions(APIView):
         tigID = int(prod['tigID'])
         quantity = int(prod['quantity'])
         date = prod['date']
-
-        if(date==""):
-            print(transaction_type, price, tigID, quantity, date)
             
-            if transaction_type == 0 :
-                response = requests.get(baseUrl+'product/'+str(tigID))
-                jsondata = response.json()
-                #prix=int(float(jsondata['price'])*float(prod['quantity']))
-                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type)
-                trans.save()
-                return Response({ "OK" : "Achat fait"})
+        if transaction_type == 0 :
+            response = requests.get(baseUrl+'product/'+str(tigID))
+            jsondata = response.json()
+            #prix=int(float(jsondata['price'])*float(prod['quantity']))
+            trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans.save()
+            return Response({ "OK" : "Achat fait"})
 
-            if transaction_type == 1 :
-                prod_sold = self.get_object(tigID)
-                #prix=int(float(prod_sold['price'])*float(prod['quantity']))
-                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type)
-                trans.save()
-                return Response({ "OK" : "Vente faite"})
+        if transaction_type == 1 :
+            prod_sold = self.get_object(tigID)
+            #prix=int(float(prod_sold['price'])*float(prod['quantity']))
+            trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans.save()
+            return Response({ "OK" : "Vente faite"})
 
-            if transaction_type == 2 :
-                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type)
-                trans.save()
-                return Response({ "OK" : "Invendu retiré"})
-            
-        else:
-            print(transaction_type, price, tigID, quantity, date)
-            
-            if transaction_type == 0 :
-                response = requests.get(baseUrl+'product/'+str(tigID))
-                jsondata = response.json()
-                #prix=int(float(jsondata['price'])*float(prod['quantity']))
-                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
-                trans.save()
-                return Response({ "OK" : "Achat fait"})
-
-            if transaction_type == 1 :
-                prod_sold = self.get_object(tigID)
-                #prix=int(float(prod_sold['price'])*float(prod['quantity']))
-                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
-                trans.save()
-                return Response({ "OK" : "Vente faite"})
-
-            if transaction_type == 2 :
-                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
-                trans.save()
-                return Response({ "OK" : "Invendu retiré"})
+        if transaction_type == 2 :
+            trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans.save()
+            return Response({ "OK" : "Invendu retiré"})
 
         return Response({ "KO" : "Type de transaction non reconnu"})
 
