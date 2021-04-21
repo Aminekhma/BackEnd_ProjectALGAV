@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from mytig.config import baseUrl
@@ -28,22 +29,24 @@ class ListeDeTransactions(APIView):
     def put(self, request,format=None):
         prod = request.data
         print(request.data)
+        date=datetime.today()
+        print(date)
         if prod['transaction_type'] == 0 :
             response = requests.get(baseUrl+'product/'+str(prod['id']))
             jsondata = response.json()
             prix=int(float(jsondata['price'])*float(prod['quantity']))
-            trans = Transaction(tigID = prod['id'],price=prix,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
+            trans = Transaction(date=date,tigID = prod['id'],price=prix,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Achat fait"})
         if prod['transaction_type'] == 1 :
             prod_sold = self.get_object(prod['id']) 
             print(prod_sold['quantity'])
             prix=int(float(prod_sold['price'])*float(prod['quantity']))
-            trans = Transaction(tigID = prod['id'],price=prix,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
+            trans = Transaction(date=date,tigID = prod['id'],price=prix,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Vente faite"})
         if prod['transaction_type'] == 2 :
-            trans = Transaction(tigID = prod['id'],price=0,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
+            trans = Transaction(date=date,tigID = prod['id'],price=0,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Invendu retiré"})
         return Response({ "KO" : "Type de transaction non reconnu"})
@@ -53,7 +56,6 @@ class ListeDeTransactions(APIView):
         transaction_type = int(prod['transaction_type'])
         tigID = int(prod['tigID'])
         quantity = int(prod['quantity'])
-        date = prod['date']
         prod_sold = self.get_object(tigID) 
         prix=int(float(prod_sold['price'])*float(prod['quantity']))
             
@@ -61,19 +63,19 @@ class ListeDeTransactions(APIView):
             response = requests.get(baseUrl+'product/'+str(tigID))
             jsondata = response.json()
             #prix=int(float(jsondata['price'])*float(prod['quantity']))
-            trans = Transaction(tigID = tigID,price=prix,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans = Transaction(tigID = tigID,price=prix,quantity=quantity,transaction_type = transaction_type,date=prod['date'])
             trans.save()
             return Response({ "OK" : "Achat fait"})
 
         if transaction_type == 1 :
             prod_sold = self.get_object(tigID)
             #prix=int(float(prod_sold['price'])*float(prod['quantity']))
-            trans = Transaction(tigID = tigID,price=prix,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans = Transaction(tigID = tigID,price=prix,quantity=quantity,transaction_type = transaction_type,date=prod['date'])
             trans.save()
             return Response({ "OK" : "Vente faite"})
 
         if transaction_type == 2 :
-            trans = Transaction(tigID = tigID,price=0,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans = Transaction(tigID = tigID,price=0,quantity=quantity,transaction_type = transaction_type,date=prod['date'])
             trans.save()
             return Response({ "OK" : "Invendu retiré"})
 

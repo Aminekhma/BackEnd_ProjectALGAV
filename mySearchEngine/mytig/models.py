@@ -35,7 +35,7 @@ class Produit(models.Model):
     category = models.IntegerField(default='-1')
 
 class Transaction(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.CharField(max_length=2000)
     price = models.FloatField(default = 0.0)
     quantity = models.IntegerField(default='0')
     tigID = models.IntegerField(default='-1')
