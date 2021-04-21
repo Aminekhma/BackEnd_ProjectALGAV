@@ -51,28 +51,29 @@ class ListeDeTransactions(APIView):
     def patch(self, request,format=None):
         prod = request.data
         transaction_type = int(prod['transaction_type'])
-        price = float(prod['price'])
         tigID = int(prod['tigID'])
         quantity = int(prod['quantity'])
         date = prod['date']
+        prod_sold = self.get_object(tigID) 
+        prix=int(float(prod_sold['price'])*float(prod['quantity']))
             
         if transaction_type == 0 :
             response = requests.get(baseUrl+'product/'+str(tigID))
             jsondata = response.json()
             #prix=int(float(jsondata['price'])*float(prod['quantity']))
-            trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans = Transaction(tigID = tigID,price=prix,quantity=quantity,transaction_type = transaction_type,date=date)
             trans.save()
             return Response({ "OK" : "Achat fait"})
 
         if transaction_type == 1 :
             prod_sold = self.get_object(tigID)
             #prix=int(float(prod_sold['price'])*float(prod['quantity']))
-            trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans = Transaction(tigID = tigID,price=prix,quantity=quantity,transaction_type = transaction_type,date=date)
             trans.save()
             return Response({ "OK" : "Vente faite"})
 
         if transaction_type == 2 :
-            trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+            trans = Transaction(tigID = tigID,price=0,quantity=quantity,transaction_type = transaction_type,date=date)
             trans.save()
             return Response({ "OK" : "Invendu retiré"})
 
