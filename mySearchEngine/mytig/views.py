@@ -25,7 +25,7 @@ class ListeDeTransactions(APIView):
             res.append(TransactionSerializer(t).data)
         return Response(res)
 
-    def patch(self, request,format=None):
+    def put(self, request,format=None):
         prod = request.data
         print(request.data)
         if prod['transaction_type'] == 0 :
@@ -35,7 +35,6 @@ class ListeDeTransactions(APIView):
             trans = Transaction(tigID = prod['id'],price=prix,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Achat fait"})
-
         if prod['transaction_type'] == 1 :
             prod_sold = self.get_object(prod['id']) 
             print(prod_sold['quantity'])
@@ -43,13 +42,65 @@ class ListeDeTransactions(APIView):
             trans = Transaction(tigID = prod['id'],price=prix,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Vente faite"})
-
         if prod['transaction_type'] == 2 :
             trans = Transaction(tigID = prod['id'],price=0,quantity=prod["quantity"],transaction_type= prod["transaction_type"])
             trans.save()
             return Response({ "OK" : "Invendu retiré"})
-         
+        return Response({ "KO" : "Type de transaction non reconnu"})
+    
+    def patch(self, request,format=None):
+        prod = request.data
+        transaction_type = int(prod['transaction_type'])
+        price = float(prod['price'])
+        tigID = int(prod['tigID'])
+        quantity = int(prod['quantity'])
+        date = prod['date']
 
+        if(date==""):
+            print(transaction_type, price, tigID, quantity, date)
+            
+            if transaction_type == 0 :
+                response = requests.get(baseUrl+'product/'+str(tigID))
+                jsondata = response.json()
+                #prix=int(float(jsondata['price'])*float(prod['quantity']))
+                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type)
+                trans.save()
+                return Response({ "OK" : "Achat fait"})
+
+            if transaction_type == 1 :
+                prod_sold = self.get_object(tigID)
+                #prix=int(float(prod_sold['price'])*float(prod['quantity']))
+                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type)
+                trans.save()
+                return Response({ "OK" : "Vente faite"})
+
+            if transaction_type == 2 :
+                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type)
+                trans.save()
+                return Response({ "OK" : "Invendu retiré"})
+            
+        else:
+            print(transaction_type, price, tigID, quantity, date)
+            
+            if transaction_type == 0 :
+                response = requests.get(baseUrl+'product/'+str(tigID))
+                jsondata = response.json()
+                #prix=int(float(jsondata['price'])*float(prod['quantity']))
+                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+                trans.save()
+                return Response({ "OK" : "Achat fait"})
+
+            if transaction_type == 1 :
+                prod_sold = self.get_object(tigID)
+                #prix=int(float(prod_sold['price'])*float(prod['quantity']))
+                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+                trans.save()
+                return Response({ "OK" : "Vente faite"})
+
+            if transaction_type == 2 :
+                trans = Transaction(tigID = tigID,price=price,quantity=quantity,transaction_type = transaction_type,date=date)
+                trans.save()
+                return Response({ "OK" : "Invendu retiré"})
 
         return Response({ "KO" : "Type de transaction non reconnu"})
 
@@ -97,6 +148,7 @@ class decrementStock(APIView):
             return Response(ProduitSerializer(prod).data)
         else:
             prod.quantity = prod.quantity - number
+            prod.sales_number = prod.sales_number+number
             prod.save()
             response = ProduitSerializer(prod).data
             return Response(response)
@@ -128,7 +180,7 @@ class changePercent(APIView):
         else:
             prod = self.get_object(id)
             prod.discount_percent = percentage
-            newprice = prod.price - (1.0 - (percentage/100.0))
+            newprice = prod.price * (1.0 - (percentage/100.0))
             prod.discount_price = round(newprice,2)
             prod.save()
             response = ProduitSerializer(prod).data
