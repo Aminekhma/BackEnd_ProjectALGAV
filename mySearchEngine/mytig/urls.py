@@ -15,7 +15,6 @@ urlpatterns = [
     path('onsaleproducts/', views.PromoList.as_view()),
     path('product/<int:pk>/', views.DetailProduit.as_view()),
     path('onsaleproduct/<int:pk>/', views.PromoDetail.as_view()),
-    
     path('decrementStock/<int:id>/<int:number>/',views.decrementStock.as_view()),
     path('incrementStock/<int:id>/<int:number>/',views.incrementStock.as_view()),
     path('changePercent/<int:id>/<float:percentage>/',views.changePercent.as_view()),
