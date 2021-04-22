@@ -19,7 +19,7 @@ urlpatterns = [
     path('decrementStock/<int:id>/<int:number>/',views.decrementStock.as_view()),
     path('incrementStock/<int:id>/<int:number>/',views.incrementStock.as_view()),
     path('changePercent/<int:id>/<float:percentage>/',views.changePercent.as_view()),
-
+    path('invendu/<int:id>/<int:number>/',views.invendu.as_view()),
 
     path('transactions/',views.ListeDeTransactions.as_view()),
 ]

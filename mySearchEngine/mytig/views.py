@@ -130,6 +130,24 @@ class decrementStock(APIView):
             response = ProduitSerializer(prod).data
             return Response(response)
 
+class invendu(APIView):
+    def get_object(self, id):
+        try:
+            queryset = Produit.objects.get(tigID = id)
+            return queryset
+        except Produit.DoesNotExist:
+            raise Http404
+    def get(self, request, id, number,format=None):
+
+        prod = self.get_object(id)
+        if(prod.quantity<= 0):
+            return Response(ProduitSerializer(prod).data)
+        else:
+            prod.quantity = prod.quantity - number
+            prod.save()
+            response = ProduitSerializer(prod).data
+            return Response(response)
+
 class incrementStock(APIView):
     def get_object(self, id):
         try:
